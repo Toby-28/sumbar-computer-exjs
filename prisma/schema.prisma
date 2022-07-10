@@ -1,0 +1,49 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("PG_CONNECTION_STRING")
+}
+
+model category {
+  id    Int     @id @default(autoincrement())
+  title String  @unique(map: "title") @db.VarChar(45)
+  link  String? @db.VarChar(255)
+  data  Json[]  @db.Json
+}
+
+model banner_big {
+  id        Int     @id(map: "big_banner_pkey") @default(autoincrement())
+  image_url String  @db.VarChar(255)
+  link      String? @db.VarChar(255)
+}
+
+model banner_small {
+  id        Int     @id(map: "small_banner_pkey") @default(autoincrement())
+  image_url String  @db.VarChar(255)
+  link      String? @db.VarChar(255)
+}
+
+model carts {
+  id       Int    @id(map: "cart_pkey") @default(autoincrement())
+  user_id  Int
+  products Json[] @db.Json
+  users    users  @relation(fields: [user_id], references: [id], onDelete: Cascade, map: "username")
+}
+
+model products {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique(map: "productname") @db.VarChar(200)
+  part_number String   @db.VarChar(100)
+  image_urls  String[] @db.VarChar(255)
+}
+
+model users {
+  id    Int     @id @default(autoincrement())
+  phone Int
+  email String? @db.VarChar(255)
+  name  String  @db.VarChar(45)
+  carts carts[]
+}
